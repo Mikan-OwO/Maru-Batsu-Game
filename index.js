@@ -44,3 +44,5 @@ if(command === "start") {
 }
 
 client.on("message", message => Game(message))
+
+client.login(process.env.TOKEN);
