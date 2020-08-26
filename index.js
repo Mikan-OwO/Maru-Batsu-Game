@@ -13,33 +13,52 @@ const field = [
 
 function async Game(message) {
 const [command,...args] = message.content.slice(prefix.length).split(" ")
+const channel = data.find(ch => ch.chid === message.channel.id)
 if(!message.content.startsWith(prefix)) return;
 if(command === "start") {
+ if(!channel) {
+   data.push({
+     chid: message.channel.id,
+     field: field,
+     entory1: {uid: null, ability: "⭕"},
+     entory2: {uid: null, ability: "❌"}
+   });
+  let count = 2;
   message.channel.send(
     new discord.MessageEmbed()
     .setDescription("リアクションを押して参加してください。")
     .addField("募集人数", `残り${count}人`)
-    ).then(start => {
-    let count = 2
-    start.react("✅").then(reaction => {
-    const filter = (reaction, user) => reaction.emoji.name === "✅" && !user.bot;
-    start.awaitReactions(filter, { max: 1, time: 180000, errors: ["time"] })
-     .then(() => {
-      if(count > 0) {
-      coint -= 1;
-      start.edit(
-     new discord.MessageEmbed()
-    .setDescription("リアクションを押して参加してください。")
-    .addField("募集人数", `残り${count}人`)
-      )
-      } else {
-        count = 0;
-        start.edit(new discord.MessageEmbed().setTitle("ゲームを開始します。"))
+    ).then(async start => {
+    const collector = await message.channel.createMessageCollector(m => m.author.id === message.author.id, 
+    {time: 60000})
+     collector.on('collect',collected => {
+      switch(collected.content.toLowerCase()) {
+        case "!?ok":
+          if(count > 0) {
+          count -= 1;
+          message.channel.send(message.author.username + "さんが参加しました。")
+          .then(msg => msg.delete({timeout: 2000));
+          if(channel.entory1.uid == null) {
+          channel.entory1.uid = message.author.id;
+          message.reply("あなたは⭕️です！")
+                                   .then(reply => reply.delete({timeout: 2000}))
+                } else {
+                  channel.entory2.uid = message.author.id;
+                message.reply("あなたは❌です！").then(reply => reply.delete({timeout: 2000}))
+               }
+              } else {
+          client.channels.cache.get(channel.chid).send("募集を終了しました。")
+              }
+          break;
       }
-    })
-     .catch(() => start.edit(new discord.MessageEmbed().setTitle("時間切れです。")));
-    })
+     collector.on('end', () => {
+      start.edit(new discord.MessageEmbed().setTitle("処理を終了しました。"))
+    }
+   })
   })
+  } else {
+  message.reply("ゲームはもう始まっている...")
+  }
  }
 }
 
