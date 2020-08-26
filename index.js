@@ -6,9 +6,9 @@ const data = require("./data.json")
 const { prefix } = require("./config.json")
 
 const field = [
-[0,0,0],
-[0,0,0],
-[0,0,0],
+0,0,0,
+0,0,0,
+0,0,0
 ];
 
 function async Game(message) {
