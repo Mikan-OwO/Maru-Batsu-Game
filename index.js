@@ -11,15 +11,6 @@ const field = [
 0,0,0
 ];
 
-function async Game(message) {
-const [command,...args] = message.content.slice(prefix.length).split(" ")
-const channel = data.find(ch => ch.chid === message.channel.id)
-if(!message.content.startsWith(prefix)) return;
-if(command === "start") {
- if(!channel) {
-   data.push({
-     chid: message.channel.id,
-     field: field,
 async function Game(message) {
 	const [command, ...args] = message.content.slice(prefix.length).split(' ');
 	const channel = data.find(ch => ch.chid === message.channel.id);
@@ -29,8 +20,13 @@ async function Game(message) {
 			data.push({
 				chid: message.channel.id,
 				field: field,
-				entory_one: { uid: null, ability: '⭕' },
-				entory_two: { uid: null, ability: '❌' }
+				entory: [
+					{ uid: null, ability: '⭕️' },
+					{
+						uid: null,
+						ability: '❌'
+					}
+				]
 			});
 			let count = 2;
 			message.channel
@@ -52,13 +48,13 @@ async function Game(message) {
 									message.channel
 										.send(message.author.username + 'さんが参加しました。')
 										.then(msg => msg.delete({ timeout: 2000 }));
-									if (channel.entory_one.uid == null) {
-										channel.entory_one.uid = message.author.id;
+									if (channel.entory[0].uid == null) {
+										channel.entory[0].uid = message.author.id;
 										message
 											.reply('あなたは⭕️です！')
 											.then(reply => reply.delete({ timeout: 2000 }));
 									} else {
-										channel.entory_two.uid = message.author.id;
+										channel.entory[1].uid = message.author.id;
 										message
 											.reply('あなたは❌です！')
 											.then(reply => reply.delete({ timeout: 2000 }));
