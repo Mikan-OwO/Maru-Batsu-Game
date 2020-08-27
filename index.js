@@ -47,18 +47,20 @@ async function Game(message) {
 									count -= 1;
 									message.channel
 										.send(message.author.username + 'さんが参加しました。')
-										.then(msg => msg.delete({ timeout: 2000 }));
-									if (channel.entory[0].uid == null) {
-										channel.entory[0].uid = message.author.id;
-										message
-											.reply('あなたは⭕️です！')
-											.then(reply => reply.delete({ timeout: 2000 }));
-									} else {
-										channel.entory[1].uid = message.author.id;
-										message
-											.reply('あなたは❌です！')
-											.then(reply => reply.delete({ timeout: 2000 }));
-									}
+										.then(msg => {
+											msg.delete({ timeout: 2000 });
+											if (channel.entory[0].uid == null) {
+												channel.entory[0].uid = message.author.id;
+												message
+													.reply('あなたは⭕️です！')
+													.then(reply => reply.delete({ timeout: 2000 }));
+											} else {
+												channel.entory[1].uid = message.author.id;
+												message
+													.reply('あなたは❌です！')
+													.then(reply => reply.delete({ timeout: 2000 }));
+											}
+										});
 								} else {
 									client.channels.cache
 										.get(channel.chid)
